@@ -1,7 +1,10 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { createSupabaseServerClient } from '@/lib/supabaseServer'
 import SignOutButton from '@/components/SignOutButton'
 import ImageUploader from '@/components/RecipeFinder'
+
+// ...existing imports...
 
 export default async function Home() {
   const supabase = createSupabaseServerClient()
@@ -30,7 +33,7 @@ export default async function Home() {
       <div className="absolute top-5 right-5 z-10">
         {session ? (
           <div className="flex items-center gap-4">
-            <p className="text-sm text-gray-600 dark:text-gray-300">Welcome, {session.user.email}</p>
+            <p className="text-base font-medium text-indigo-600 dark:text-indigo-400">Hey there, {session.user.user_metadata?.name || session.user.email}! 👋</p>
             <SignOutButton />
           </div>
         ) : (
@@ -57,13 +60,20 @@ export default async function Home() {
         {session ? (
           <ImageUploader />
         ) : (
-          <div className="p-8 text-center bg-white/90 dark:bg-gray-900/90 rounded-lg shadow-md">
+          <div className="text-center bg-white/80 dark:bg-gray-800/80 p-6 rounded-lg shadow-lg max-w-md mx-auto">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
               Please Log In to Get Started
             </h2>
             <p className="mt-2 text-gray-500 dark:text-gray-300">
               Create an account or sign in to begin generating recipes.
             </p>
+            <Image
+              src="/cooking.gif"
+              alt="Cooking animation"
+              width={300}
+              height={300}
+              className="mt-8 mx-auto"
+            />
           </div>
         )}
       </div>
