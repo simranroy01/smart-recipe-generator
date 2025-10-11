@@ -1,0 +1,64 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { GoogleGenerativeAI } from '@google/generative-ai'
+
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!)
+
+export async function POST(request: NextRequest) {
+  try {
+    const { ingredients, dietary, maxTime, difficulty } = await request.json()
+
+    if (!ingredients || ingredients.length === 0) {
+      return NextResponse.json({ error: 'Ingredients are required' }, { status: 400 })
+    }
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-pro-latest' })
+
+    const prompt = `
+Generate 3 creative recipes using these ingredients: ${ingredients.join(', ')}.
+Consider dietary preference: ${dietary || 'any'}.
+Max cooking time: ${maxTime ? `${maxTime} minutes` : 'no limit'}.
+Difficulty level: ${difficulty || 'any'}.
+
+For each recipe, provide:
+- title: A catchy name
+- difficulty: Easy, Medium, or Hard
+- cooking_time_minutes: A number within the max time if specified
+- cuisine: e.g., Italian, Indian, etc.
+- description: A brief summary of the recipe
+
+Return as a JSON array of objects, no extra text.
+Example: [{"title": "Chicken Stir Fry", "difficulty": "Easy", "cooking_time_minutes": 20, "cuisine": "Chinese", "description": "Quick stir fry with chicken and veggies"}]
+`
+
+    const result = await model.generateContent(prompt)
+    const response = await result.response
+    const text = response.text()
+
+    let recipes
+    try {
+      // Extract JSON array from the response
+      const jsonMatch = text.match(/\[[\s\S]*\]/)
+      if (!jsonMatch) throw new Error('No JSON found in response')
+      recipes = JSON.parse(jsonMatch[0])
+    } catch (e) {
+      console.error('Failed to parse AI response:', text)
+      return NextResponse.json({ error: 'Failed to parse AI response' }, { status: 500 })
+    }
+
+    // Add image_url placeholder and id
+    const formattedRecipes = recipes.map((recipe: any, index: number) => ({
+      id: Date.now() + index, // Simple unique id
+      title: recipe.title,
+      difficulty: recipe.difficulty,
+      cooking_time_minutes: recipe.cooking_time_minutes,
+      cuisine: recipe.cuisine,
+      image_url: 'https://via.placeholder.com/300x200?text=AI+Generated+Image', // Placeholder
+      score: Math.floor(Math.random() * 100) + 1, // Random score
+    }))
+
+    return NextResponse.json({ recipes: formattedRecipes })
+  } catch (error) {
+    console.error('Error generating AI recipes:', error)
+    return NextResponse.json({ error: 'Failed to generate recipes' }, { status: 500 })
+  }
+}

@@ -11,6 +11,7 @@ export interface Recipe {
   cuisine: string;
   image_url: string;
   score?: number;
+  description?: string;
 }
 
 export default function RecipeFinder() {
@@ -111,6 +112,37 @@ export default function RecipeFinder() {
     setRecipes([])
     try {
       const response = await fetch('/api/get-recipes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ingredients: selectedIngredients,
+          dietary,
+          maxTime: maxTime ? parseInt(maxTime) : null,
+          difficulty: difficulty !== 'any' ? difficulty : null,
+        }),
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error)
+      setRecipes(data.recipes)
+      setCurrentView('results')
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // --- AI RECIPE GENERATION ---
+  const handleGenerateAIRecipes = async () => {
+    if (selectedIngredients.length === 0) {
+      setError('Please select some ingredients first.')
+      return
+    }
+    setLoading(true)
+    setError(null)
+    setRecipes([])
+    try {
+      const response = await fetch('/api/generate-ai-recipes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -273,6 +305,10 @@ export default function RecipeFinder() {
         </div>
         <button onClick={handleFindRecipes} disabled={loading} className="w-full px-4 py-2 mt-6 text-lg font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors">
           {loading ? 'Finding Recipes...' : 'Find Recipes'}
+        </button>
+        <p className="text-center text-gray-500 mt-4">OR</p>
+        <button onClick={handleGenerateAIRecipes} disabled={loading} className="w-full px-4 py-2 mt-2 text-lg font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition-colors">
+          {loading ? 'Generating AI Recipes...' : 'Generate AI Recipes'}
         </button>
       </div>
       {error && <p className="mt-4 text-sm text-center text-red-600 dark:text-red-400">{error}</p>}

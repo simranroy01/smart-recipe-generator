@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
 interface RecipePageParams {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 interface RecipeIngredient {
@@ -20,10 +20,12 @@ interface RecipeNutrition {
 export default async function RecipePage({ params }: RecipePageParams) {
   const supabase = createSupabaseServerClient()
 
+  const { id } = await params
+
   const { data: recipe } = await supabase
     .from('recipes')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (!recipe) {
