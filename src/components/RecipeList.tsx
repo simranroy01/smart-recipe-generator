@@ -1,6 +1,14 @@
 // src/components/RecipeList.tsx
-import { Recipe } from './ImageUploader'
-import RecipeCard from './RecipeCard' // This will show an error until we create the next file
+import RecipeCard from './RecipeCard'
+
+interface Recipe {
+  id: number
+  title: string
+  image_url: string
+  difficulty?: string
+  cooking_time_minutes?: number
+  // ...other fields as needed
+}
 
 interface RecipeListProps {
   recipes: Recipe[]

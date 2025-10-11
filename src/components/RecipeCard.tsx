@@ -1,22 +1,28 @@
-// src/components/RecipeCard.tsx
 import Link from 'next/link'
-import { Recipe } from './ImageUploader'
+// ...other imports...
 
 interface RecipeCardProps {
-  recipe: Recipe
+  recipe: {
+    id: number
+    title: string
+    image_url: string
+    difficulty?: string
+    cooking_time_minutes?: number
+    // ...other fields as needed
+  }
 }
 
 export default function RecipeCard({ recipe }: RecipeCardProps) {
   return (
-    <Link href={`/recipes/${recipe.id}`} className="block overflow-hidden bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <img src={recipe.image_url} alt={recipe.title} className="object-cover w-full h-48" />
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800">{recipe.title}</h3>
-        <div className="flex justify-between mt-2 text-xs text-gray-600">
-          <span>{recipe.difficulty}</span>
-          <span>{recipe.cooking_time_minutes} mins</span>
-        </div>
+    <Link href={`/recipes/${recipe.id}`} className="block rounded-lg shadow hover:shadow-lg transition p-4 bg-white">
+      <img src={recipe.image_url} alt={recipe.title} className="w-full h-40 object-cover rounded mb-3" />
+      <h3 className="text-lg font-semibold mb-1">{recipe.title}</h3>
+      {/* Optional: show difficulty and cooking time if available */}
+      <div className="flex justify-between text-xs text-gray-600">
+        {recipe.difficulty && <span>{recipe.difficulty}</span>}
+        {recipe.cooking_time_minutes && <span>{recipe.cooking_time_minutes} mins</span>}
       </div>
+      {/* ...other card content... */}
     </Link>
   )
 }
