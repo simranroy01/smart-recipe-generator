@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { createSupabaseServerClient } from '@/lib/supabaseServer'
 import SignOutButton from '@/components/SignOutButton'
-import ImageUploader from '@/components/RecipeFinder' // <-- Import the new component
+import ImageUploader from '@/components/RecipeFinder'
 
 export default async function Home() {
   const supabase = createSupabaseServerClient()
@@ -11,8 +11,23 @@ export default async function Home() {
   } = await supabase.auth.getSession()
 
   return (
-    <main className="flex flex-col items-center min-h-screen p-4 pt-20 bg-gray-50 dark:bg-[#0a0a0a]">
-      <div className="absolute top-5 right-5">
+    <main className="relative flex flex-col items-center min-h-screen p-4 pt-20 bg-gray-50 dark:bg-[#0a0a0a] overflow-hidden">
+      {/* Background image with overlay */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: "url('/foodbg.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.35,
+          pointerEvents: 'none',
+        }}
+        aria-hidden="true"
+      />
+      {/* Overlay for better contrast */}
+      <div className="absolute inset-0 z-0 bg-white/40 dark:bg-black/60" aria-hidden="true" />
+
+      <div className="absolute top-5 right-5 z-10">
         {session ? (
           <div className="flex items-center gap-4">
             <p className="text-sm text-gray-600 dark:text-gray-300">Welcome, {session.user.email}</p>
@@ -28,7 +43,7 @@ export default async function Home() {
         )}
       </div>
 
-      <div className="w-full max-w-5xl text-center">
+      <div className="w-full max-w-5xl text-center z-10">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-6xl">
           Smart Recipe Generator
         </h1>
@@ -38,11 +53,11 @@ export default async function Home() {
       </div>
 
       {/* Conditionally render the ImageUploader if the user is logged in */}
-      <div className="w-full mt-10">
+      <div className="w-full mt-10 z-10">
         {session ? (
           <ImageUploader />
         ) : (
-          <div className="p-8 text-center bg-white dark:bg-gray-900 rounded-lg shadow-md">
+          <div className="p-8 text-center bg-white/90 dark:bg-gray-900/90 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
               Please Log In to Get Started
             </h2>
