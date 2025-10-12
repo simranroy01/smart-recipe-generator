@@ -12,6 +12,10 @@ export interface Recipe {
   image_url: string;
   score?: number;
   description?: string;
+  servings?: number;
+  ingredients?: { name: string; quantity: string }[];
+  instructions?: string[];
+  nutrition?: { calories: string; protein: string };
 }
 
 export default function RecipeFinder() {
@@ -25,7 +29,8 @@ export default function RecipeFinder() {
   const [dietary, setDietary] = useState('any')
   const [maxTime, setMaxTime] = useState('')
   const [difficulty, setDifficulty] = useState('any')
-  const [loading, setLoading] = useState(false)
+  const [findLoading, setFindLoading] = useState(false)
+  const [aiLoading, setAiLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [currentView, setCurrentView] = useState<'input' | 'results'>('input')
@@ -66,7 +71,7 @@ export default function RecipeFinder() {
       setError('Please select a file first.')
       return
     }
-    setLoading(true)
+    setFindLoading(true)
     setError(null)
     const formData = new FormData()
     formData.append('image', file)
@@ -81,7 +86,7 @@ export default function RecipeFinder() {
     } catch (err: any) {
       setError(err.message)
     } finally {
-      setLoading(false)
+      setFindLoading(false)
     }
   }
 
@@ -107,7 +112,7 @@ export default function RecipeFinder() {
       setError('Please select some ingredients first.')
       return
     }
-    setLoading(true)
+    setFindLoading(true)
     setError(null)
     setRecipes([])
     try {
@@ -128,7 +133,7 @@ export default function RecipeFinder() {
     } catch (err: any) {
       setError(err.message)
     } finally {
-      setLoading(false)
+      setFindLoading(false)
     }
   }
 
@@ -138,7 +143,7 @@ export default function RecipeFinder() {
       setError('Please select some ingredients first.')
       return
     }
-    setLoading(true)
+    setAiLoading(true)
     setError(null)
     setRecipes([])
     try {
@@ -159,7 +164,7 @@ export default function RecipeFinder() {
     } catch (err: any) {
       setError(err.message)
     } finally {
-      setLoading(false)
+      setAiLoading(false)
     }
   }
 
@@ -216,8 +221,8 @@ export default function RecipeFinder() {
                 <img src={imagePreview} alt="Uploaded ingredients" className="max-h-48 rounded shadow" />
               </div>
             )}
-            <button type="submit" disabled={loading || !file} className="w-full px-4 py-2 text-lg font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 disabled:bg-gray-400 transition-colors">
-              {loading ? 'Analyzing...' : 'Recognize Ingredients'}
+            <button type="submit" disabled={findLoading || !file} className="w-full px-4 py-2 text-lg font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 disabled:bg-gray-400 transition-colors">
+              {findLoading ? 'Analyzing...' : 'Recognize Ingredients'}
             </button>
           </form>
         )}
@@ -303,12 +308,12 @@ export default function RecipeFinder() {
             </select>
           </div>
         </div>
-        <button onClick={handleFindRecipes} disabled={loading} className="w-full px-4 py-2 mt-6 text-lg font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors">
-          {loading ? 'Finding Recipes...' : 'Find Recipes'}
+        <button onClick={handleFindRecipes} disabled={findLoading} className="w-full px-4 py-2 mt-6 text-lg font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors">
+          {findLoading ? 'Finding Recipes...' : 'Find Recipes'}
         </button>
         <p className="text-center text-gray-500 mt-4">OR</p>
-        <button onClick={handleGenerateAIRecipes} disabled={loading} className="w-full px-4 py-2 mt-2 text-lg font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition-colors">
-          {loading ? 'Generating AI Recipes...' : 'Generate AI Recipes'}
+        <button onClick={handleGenerateAIRecipes} disabled={aiLoading} className="w-full px-4 py-2 mt-2 text-lg font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition-colors">
+          {aiLoading ? 'Generating AI Recipes...' : 'Generate AI Recipes'}
         </button>
       </div>
       {error && <p className="mt-4 text-sm text-center text-red-600 dark:text-red-400">{error}</p>}

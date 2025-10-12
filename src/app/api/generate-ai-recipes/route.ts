@@ -25,9 +25,13 @@ For each recipe, provide:
 - cooking_time_minutes: A number within the max time if specified
 - cuisine: e.g., Italian, Indian, etc.
 - description: A brief summary of the recipe
+- servings: A number, e.g., 4
+- ingredients: An array of objects, each with "quantity" (e.g., "1 cup") and "name" (e.g., "flour")
+- instructions: An array of 4-6 brief strings, each a concise step (keep each under 50 words)
+- nutrition: An object with "calories" (e.g., "300 kcal") and "protein" (e.g., "20g")
 
 Return as a JSON array of objects, no extra text.
-Example: [{"title": "Chicken Stir Fry", "difficulty": "Easy", "cooking_time_minutes": 20, "cuisine": "Chinese", "description": "Quick stir fry with chicken and veggies"}]
+Example: [{"title": "Chicken Stir Fry", "difficulty": "Easy", "cooking_time_minutes": 20, "cuisine": "Chinese", "description": "Quick stir fry with chicken and veggies", "servings": 4, "ingredients": [{"quantity": "1 lb", "name": "chicken"}, {"quantity": "2 cups", "name": "vegetables"}], "instructions": ["Step 1", "Step 2"], "nutrition": {"calories": "300 kcal", "protein": "20g"}}]
 `
 
     const result = await model.generateContent(prompt)
@@ -54,6 +58,11 @@ Example: [{"title": "Chicken Stir Fry", "difficulty": "Easy", "cooking_time_minu
       cuisine: recipe.cuisine,
       image_url: 'https://via.placeholder.com/300x200?text=AI+Generated+Image', // Placeholder
       score: Math.floor(Math.random() * 100) + 1, // Random score
+      servings: recipe.servings,
+      ingredients: recipe.ingredients,
+      instructions: recipe.instructions,
+      nutrition: recipe.nutrition,
+      description: recipe.description,
     }))
 
     return NextResponse.json({ recipes: formattedRecipes })

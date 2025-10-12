@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
 
 interface RecipeCardProps {
   recipe: {
@@ -18,7 +17,6 @@ interface RecipeCardProps {
 }
 
 export default function RecipeCard({ recipe }: RecipeCardProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
   return (
     <div
       className="
@@ -42,12 +40,12 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         {recipe.cooking_time_minutes && <span>{recipe.cooking_time_minutes} mins</span>}
       </div>
       {recipe.score ? (
-        <button
-          onClick={() => setIsModalOpen(true)}
+        <Link
+          href={`/ai-recipes/${recipe.id}?data=${encodeURIComponent(JSON.stringify(recipe))}`}
           className="inline-block px-4 py-2 mt-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition"
         >
           View AI Recipe
-        </button>
+        </Link>
       ) : (
         <Link
           href={`/recipes/${recipe.id}`}
@@ -55,24 +53,6 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         >
           View
         </Link>
-      )}
-
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full mx-4">
-            <h2 className="text-2xl font-bold mb-4">{recipe.title}</h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-2"><strong>Cuisine:</strong> {recipe.cuisine}</p>
-            <p className="text-gray-600 dark:text-gray-300 mb-2"><strong>Difficulty:</strong> {recipe.difficulty}</p>
-            <p className="text-gray-600 dark:text-gray-300 mb-2"><strong>Cooking Time:</strong> {recipe.cooking_time_minutes} mins</p>
-            <p className="text-gray-600 dark:text-gray-300 mb-4"><strong>Description:</strong> {recipe.description}</p>
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-            >
-              Close
-            </button>
-          </div>
-        </div>
       )}
     </div>
   )
