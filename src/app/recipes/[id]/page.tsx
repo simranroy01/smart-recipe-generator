@@ -1,6 +1,7 @@
 import { createSupabaseServerClient } from '@/lib/supabaseServer'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import SaveButton from '@/components/SaveButton'
 
 interface RecipePageParams {
   params: Promise<{
@@ -46,6 +47,9 @@ export default async function RecipePage({ params }: RecipePageParams) {
       </Link>
       <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">{recipe.title}</h1>
       <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">{recipe.cuisine}</p>
+      <div className="mt-4">
+        <SaveButton recipe={recipe} type="normal" />
+      </div>
 
       <img
         src={recipe.image_url}

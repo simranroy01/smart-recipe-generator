@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import SaveButton from '@/components/SaveButton'
 
 interface Recipe {
   id: number;
@@ -42,6 +43,9 @@ export default function AIRecipePage() {
       </Link>
       <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">{recipe.title}</h1>
       <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">{recipe.cuisine}</p>
+      <div className="mt-4">
+        <SaveButton recipe={recipe} type="ai" />
+      </div>
 
       <img
         src={recipe.image_url}
