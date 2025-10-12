@@ -1,7 +1,11 @@
-import { createSupabaseServerClient } from '@/lib/supabaseServer'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabaseClient'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import SaveButton from '@/components/SaveButton'
+import { scaleIngredients, scaleNutrition, RecipeIngredient, RecipeNutrition } from '@/utils/recipeUtils'
 
 interface RecipePageParams {
   params: Promise<{
@@ -9,32 +13,64 @@ interface RecipePageParams {
   }>
 }
 
-interface RecipeIngredient {
-  name: string
-  quantity: string
+interface Recipe {
+  id: string
+  title: string
+  cuisine: string
+  difficulty: string
+  cooking_time_minutes: number
+  servings: number
+  image_url: string
+  ingredients: RecipeIngredient[]
+  nutrition: RecipeNutrition
+  instructions: string[]
 }
-interface RecipeNutrition {
-  calories: string
-  protein: string
-}
 
-export default async function RecipePage({ params }: RecipePageParams) {
-  const supabase = createSupabaseServerClient()
+export default function RecipePage({ params }: RecipePageParams) {
+  const [recipe, setRecipe] = useState<Recipe | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedServings, setSelectedServings] = useState<number>(4) // Default, will be updated when recipe loads
 
-  const { id } = await params
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const supabase = createClient()
+        const { id } = await params
 
-  const { data: recipe } = await supabase
-    .from('recipes')
-    .select('*')
-    .eq('id', id)
-    .single()
+        const { data, error } = await supabase
+          .from('recipes')
+          .select('*')
+          .eq('id', id)
+          .single()
 
-  if (!recipe) {
-    notFound()
+        if (error || !data) {
+          setError('Recipe not found')
+          return
+        }
+
+        setRecipe(data)
+        setSelectedServings(data.servings || 4)
+      } catch (err) {
+        setError('Failed to load recipe')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchRecipe()
+  }, [params])
+
+  if (loading) {
+    return <div className="text-center mt-10">Loading recipe...</div>
   }
 
-  const ingredients: RecipeIngredient[] = recipe.ingredients || []
-  const nutrition: RecipeNutrition = recipe.nutrition || { calories: 'N/A', protein: 'N/A' }
+  if (error || !recipe) {
+    return <div className="text-center mt-10">{error || 'Recipe not found'}</div>
+  }
+
+  const scaledIngredients: RecipeIngredient[] = scaleIngredients(recipe.ingredients || [], recipe.servings || 4, selectedServings)
+  const scaledNutrition: RecipeNutrition = scaleNutrition(recipe.nutrition || { calories: 'N/A', protein: 'N/A' }, recipe.servings || 4, selectedServings)
   const instructions: string[] = recipe.instructions || []
 
   return (
@@ -62,12 +98,27 @@ export default async function RecipePage({ params }: RecipePageParams) {
           <h3 className="font-semibold text-indigo-700 dark:text-indigo-300 mb-2">Details</h3>
           <p className="text-gray-800 dark:text-gray-200"><strong>Difficulty:</strong> {recipe.difficulty}</p>
           <p className="text-gray-800 dark:text-gray-200"><strong>Cooking Time:</strong> {recipe.cooking_time_minutes} mins</p>
-          <p className="text-gray-800 dark:text-gray-200"><strong>Servings:</strong> {recipe.servings}</p>
+          <div className="flex items-center space-x-2">
+            <strong>Servings:</strong>
+            <button
+              onClick={() => setSelectedServings(Math.max(1, selectedServings - 1))}
+              className="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+            >
+              -
+            </button>
+            <span className="text-lg font-semibold">{selectedServings}</span>
+            <button
+              onClick={() => setSelectedServings(Math.min(20, selectedServings + 1))}
+              className="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+            >
+              +
+            </button>
+          </div>
         </div>
         <div className="p-4 bg-gray-100 dark:bg-gray-900 rounded-lg shadow md:col-span-2">
-          <h3 className="font-semibold text-indigo-700 dark:text-indigo-300 mb-2">Nutrition</h3>
-          <p className="text-gray-800 dark:text-gray-200"><strong>Calories:</strong> {nutrition.calories}</p>
-          <p className="text-gray-800 dark:text-gray-200"><strong>Protein:</strong> {nutrition.protein}</p>
+          <h3 className="font-semibold text-indigo-700 dark:text-indigo-300 mb-2">Nutrition (per serving)</h3>
+          <p className="text-gray-800 dark:text-gray-200"><strong>Calories:</strong> {scaledNutrition.calories}</p>
+          <p className="text-gray-800 dark:text-gray-200"><strong>Protein:</strong> {scaledNutrition.protein}</p>
         </div>
       </div>
 
@@ -75,7 +126,7 @@ export default async function RecipePage({ params }: RecipePageParams) {
         <div>
           <h2 className="text-2xl font-semibold text-indigo-700 dark:text-indigo-300">Ingredients</h2>
           <ul className="mt-4 space-y-2 list-disc list-inside">
-            {ingredients.map((ing, index) => (
+            {scaledIngredients.map((ing: RecipeIngredient, index: number) => (
               <li key={index} className="text-gray-900 dark:text-gray-100">
                 <span className="font-semibold text-indigo-600 dark:text-indigo-300">{ing.quantity}</span> {ing.name}
               </li>

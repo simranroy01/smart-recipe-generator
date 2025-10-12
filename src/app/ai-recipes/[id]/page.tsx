@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import SaveButton from '@/components/SaveButton'
+import { scaleIngredients, scaleNutrition, RecipeIngredient, RecipeNutrition } from '@/utils/recipeUtils'
 
 interface Recipe {
   id: number;
@@ -14,9 +16,9 @@ interface Recipe {
   score?: number;
   description?: string;
   servings?: number;
-  ingredients?: { name: string; quantity: string }[];
+  ingredients?: RecipeIngredient[];
   instructions?: string[];
-  nutrition?: { calories: string; protein: string };
+  nutrition?: RecipeNutrition;
 }
 
 export default function AIRecipePage() {
@@ -28,9 +30,11 @@ export default function AIRecipePage() {
   }
 
   const recipe: Recipe = JSON.parse(decodeURIComponent(dataStr))
+  const [selectedServings, setSelectedServings] = useState<number>(recipe.servings || 4)
 
-  const ingredients = recipe.ingredients || []
-  const nutrition = recipe.nutrition || { calories: 'N/A', protein: 'N/A' }
+  const baseServings = recipe.servings || 4
+  const scaledIngredients: RecipeIngredient[] = scaleIngredients(recipe.ingredients || [], baseServings, selectedServings)
+  const scaledNutrition: RecipeNutrition = scaleNutrition(recipe.nutrition || { calories: 'N/A', protein: 'N/A' }, baseServings, selectedServings)
   const instructions = recipe.instructions || []
 
   return (
@@ -58,12 +62,27 @@ export default function AIRecipePage() {
           <h3 className="font-semibold text-indigo-700 dark:text-indigo-300 mb-2">Details</h3>
           <p className="text-gray-800 dark:text-gray-200"><strong>Difficulty:</strong> {recipe.difficulty}</p>
           <p className="text-gray-800 dark:text-gray-200"><strong>Cooking Time:</strong> {recipe.cooking_time_minutes} mins</p>
-          <p className="text-gray-800 dark:text-gray-200"><strong>Servings:</strong> {recipe.servings}</p>
+          <div className="flex items-center space-x-2">
+            <strong>Servings:</strong>
+            <button
+              onClick={() => setSelectedServings(Math.max(1, selectedServings - 1))}
+              className="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+            >
+              -
+            </button>
+            <span className="text-lg font-semibold">{selectedServings}</span>
+            <button
+              onClick={() => setSelectedServings(Math.min(20, selectedServings + 1))}
+              className="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+            >
+              +
+            </button>
+          </div>
         </div>
         <div className="p-4 bg-gray-100 dark:bg-gray-900 rounded-lg shadow md:col-span-2">
-          <h3 className="font-semibold text-indigo-700 dark:text-indigo-300 mb-2">Nutrition</h3>
-          <p className="text-gray-800 dark:text-gray-200"><strong>Calories:</strong> {nutrition.calories}</p>
-          <p className="text-gray-800 dark:text-gray-200"><strong>Protein:</strong> {nutrition.protein}</p>
+          <h3 className="font-semibold text-indigo-700 dark:text-indigo-300 mb-2">Nutrition (per serving)</h3>
+          <p className="text-gray-800 dark:text-gray-200"><strong>Calories:</strong> {scaledNutrition.calories}</p>
+          <p className="text-gray-800 dark:text-gray-200"><strong>Protein:</strong> {scaledNutrition.protein}</p>
         </div>
       </div>
 
@@ -71,7 +90,7 @@ export default function AIRecipePage() {
         <div>
           <h2 className="text-2xl font-semibold text-indigo-700 dark:text-indigo-300">Ingredients</h2>
           <ul className="mt-4 space-y-2 list-disc list-inside">
-            {ingredients.map((ing, index) => (
+            {scaledIngredients.map((ing: RecipeIngredient, index: number) => (
               <li key={index} className="text-gray-900 dark:text-gray-100">
                 <span className="font-semibold text-indigo-600 dark:text-indigo-300">{ing.quantity}</span> {ing.name}
               </li>
