@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import SaveButton from '@/components/SaveButton'
+import RatingStars from '@/components/RatingStars'
 import { scaleIngredients, scaleNutrition, RecipeIngredient, RecipeNutrition } from '@/utils/recipeUtils'
 
 interface Recipe {
@@ -31,6 +32,21 @@ export default function AIRecipePage() {
 
   const recipe: Recipe = JSON.parse(decodeURIComponent(dataStr))
   const [selectedServings, setSelectedServings] = useState<number>(recipe.servings || 4)
+  const [userRating, setUserRating] = useState<number>(0)
+  const [averageRating, setAverageRating] = useState<number>(0)
+
+  useEffect(() => {
+    // Fetch ratings for AI recipe
+    const fetchRatings = async () => {
+      const ratingResponse = await fetch(`/api/rate-recipe?recipeId=${recipe.id}&type=ai`)
+      if (ratingResponse.ok) {
+        const ratingData = await ratingResponse.json()
+        setUserRating(ratingData.userRating)
+        setAverageRating(ratingData.averageRating)
+      }
+    }
+    fetchRatings()
+  }, [recipe.id])
 
   const baseServings = recipe.servings || 4
   const scaledIngredients: RecipeIngredient[] = scaleIngredients(recipe.ingredients || [], baseServings, selectedServings)
@@ -47,8 +63,21 @@ export default function AIRecipePage() {
       </Link>
       <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">{recipe.title}</h1>
       <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">{recipe.cuisine}</p>
-      <div className="mt-4">
+      <div className="mt-4 flex items-center space-x-4">
         <SaveButton recipe={recipe} type="ai" />
+        <div className="flex items-center space-x-2">
+          <RatingStars
+            recipeId={recipe.id}
+            type="ai"
+            initialRating={userRating}
+            onRatingChange={setUserRating}
+          />
+          {averageRating > 0 && (
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              Avg: {averageRating} ★
+            </span>
+          )}
+        </div>
       </div>
 
       <img

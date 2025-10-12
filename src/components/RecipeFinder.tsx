@@ -308,13 +308,41 @@ export default function RecipeFinder() {
             </select>
           </div>
         </div>
-        <button onClick={handleFindRecipes} disabled={findLoading} className="w-full px-4 py-2 mt-6 text-lg font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors">
-          {findLoading ? 'Finding Recipes...' : 'Find Recipes'}
-        </button>
-        <p className="text-center text-gray-500 mt-4">OR</p>
-        <button onClick={handleGenerateAIRecipes} disabled={aiLoading} className="w-full px-4 py-2 mt-2 text-lg font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition-colors">
-          {aiLoading ? 'Generating AI Recipes...' : 'Generate AI Recipes'}
-        </button>
+        <div className="mt-6 space-y-4">
+          <button
+            onClick={handleFindRecipes}
+            disabled={findLoading}
+            className="group relative w-full inline-flex items-center justify-center px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            <span className="relative z-10 flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              {findLoading ? 'Finding Recipes...' : 'Find Recipes'}
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-green-700 to-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+          </button>
+
+          <div className="flex items-center justify-center">
+            <div className="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
+            <span className="px-4 text-sm text-gray-500 dark:text-gray-400 font-medium">OR</span>
+            <div className="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
+          </div>
+
+          <button
+            onClick={handleGenerateAIRecipes}
+            disabled={aiLoading}
+            className="group relative w-full inline-flex items-center justify-center px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            <span className="relative z-10 flex items-center">
+              <svg className="w-5 h-5 mr-2 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              {aiLoading ? 'Generating AI Recipes...' : 'Generate AI Recipes'}
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+          </button>
+        </div>
       </div>
       {error && <p className="mt-4 text-sm text-center text-red-600 dark:text-red-400">{error}</p>}
     </div>

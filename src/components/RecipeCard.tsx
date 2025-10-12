@@ -16,6 +16,7 @@ interface RecipeCardProps {
     description?: string
     // ...other fields as needed
   }
+  showRating?: boolean
 }
 
 export default function RecipeCard({ recipe }: RecipeCardProps) {

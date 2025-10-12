@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabaseClient'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import SaveButton from '@/components/SaveButton'
+import RatingStars from '@/components/RatingStars'
 import { scaleIngredients, scaleNutrition, RecipeIngredient, RecipeNutrition } from '@/utils/recipeUtils'
 
 interface RecipePageParams {
@@ -31,6 +32,8 @@ export default function RecipePage({ params }: RecipePageParams) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedServings, setSelectedServings] = useState<number>(4) // Default, will be updated when recipe loads
+  const [userRating, setUserRating] = useState<number>(0)
+  const [averageRating, setAverageRating] = useState<number>(0)
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -51,6 +54,14 @@ export default function RecipePage({ params }: RecipePageParams) {
 
         setRecipe(data)
         setSelectedServings(data.servings || 4)
+
+        // Fetch ratings
+        const ratingResponse = await fetch(`/api/rate-recipe?recipeId=${id}&type=normal`)
+        if (ratingResponse.ok) {
+          const ratingData = await ratingResponse.json()
+          setUserRating(ratingData.userRating)
+          setAverageRating(ratingData.averageRating)
+        }
       } catch (err) {
         setError('Failed to load recipe')
       } finally {
@@ -83,8 +94,21 @@ export default function RecipePage({ params }: RecipePageParams) {
       </Link>
       <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">{recipe.title}</h1>
       <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">{recipe.cuisine}</p>
-      <div className="mt-4">
+      <div className="mt-4 flex items-center space-x-4">
         <SaveButton recipe={recipe} type="normal" />
+        <div className="flex items-center space-x-2">
+          <RatingStars
+            recipeId={parseInt(recipe.id)}
+            type="normal"
+            initialRating={userRating}
+            onRatingChange={setUserRating}
+          />
+          {averageRating > 0 && (
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              Avg: {averageRating} ★
+            </span>
+          )}
+        </div>
       </div>
 
       <img
