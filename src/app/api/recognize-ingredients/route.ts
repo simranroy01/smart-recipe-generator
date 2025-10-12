@@ -44,6 +44,7 @@ export async function POST(request: Request) {
 
     const [result] = await visionClient.labelDetection(imageUrl)
     const labels = result.labelAnnotations
+    console.log('Vision API labels:', labels)
 
     // 5. Process the labels to get a clean list of ingredients
     const ingredients = labels
