@@ -3,6 +3,33 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!)
 
+async function getUnsplashImage(query: string): Promise<string> {
+  try {
+    const accessKey = process.env.UNSPLASH_ACCESS_KEY
+    if (!accessKey) {
+      console.warn('Unsplash API key not found')
+      return 'https://via.placeholder.com/400x300?text=No+Image' // Fallback placeholder
+    }
+
+    const response = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query + ' food recipe')}&per_page=1&orientation=landscape`, {
+      headers: {
+        'Authorization': `Client-ID ${accessKey}`,
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`Unsplash API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    const imageUrl = data.results[0]?.urls?.regular || 'https://via.placeholder.com/400x300?text=No+Image'
+    return imageUrl
+  } catch (error) {
+    console.error('Unsplash Image Fetch Error:', error)
+    return 'https://via.placeholder.com/400x300?text=No+Image'
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { ingredients, dietary, maxTime, difficulty } = await request.json()
@@ -49,20 +76,23 @@ Example: [{"title": "Chicken Stir Fry", "difficulty": "Easy", "cooking_time_minu
       return NextResponse.json({ error: 'Failed to parse AI response' }, { status: 500 })
     }
 
-    // Add image_url placeholder and id
-    const formattedRecipes = recipes.map((recipe: any, index: number) => ({
-      id: Date.now() + index, // Simple unique id
-      title: recipe.title,
-      difficulty: recipe.difficulty,
-      cooking_time_minutes: recipe.cooking_time_minutes,
-      cuisine: recipe.cuisine,
-      image_url: 'https://via.placeholder.com/300x200?text=AI+Generated+Image', // Placeholder
-      score: Math.floor(Math.random() * 100) + 1, // Random score
-      servings: recipe.servings,
-      ingredients: recipe.ingredients,
-      instructions: recipe.instructions,
-      nutrition: recipe.nutrition,
-      description: recipe.description,
+    // Add image_url from Unsplash and id
+    const formattedRecipes = await Promise.all(recipes.map(async (recipe: any, index: number) => {
+      const imageUrl = await getUnsplashImage(recipe.title)
+      return {
+        id: Date.now() + index, // Simple unique id
+        title: recipe.title,
+        difficulty: recipe.difficulty,
+        cooking_time_minutes: recipe.cooking_time_minutes,
+        cuisine: recipe.cuisine,
+        image_url: imageUrl,
+        score: Math.floor(Math.random() * 100) + 1, // Random score
+        servings: recipe.servings,
+        ingredients: recipe.ingredients,
+        instructions: recipe.instructions,
+        nutrition: recipe.nutrition,
+        description: recipe.description,
+      }
     }))
 
     return NextResponse.json({ recipes: formattedRecipes })
