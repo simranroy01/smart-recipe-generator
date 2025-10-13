@@ -1,7 +1,7 @@
 // src/app/auth/page.tsx
 'use client'
 
-export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
