@@ -85,7 +85,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
       className="
         block rounded-xl shadow-lg
         bg-gray-50 dark:bg-gray-800
-        p-6
+        p-4 sm:p-6
         transition-transform duration-300
         hover:scale-105
         hover:shadow-2xl
@@ -95,7 +95,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
       <img
         src={recipe.image_url}
         alt={recipe.title}
-        className="w-full h-56 object-cover rounded-lg mb-4"
+        className="w-full h-40 sm:h-56 object-cover rounded-lg mb-4"
         loading="lazy"
       />
       <h3 className="text-xl font-semibold mb-2">{recipe.title}</h3>

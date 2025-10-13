@@ -29,7 +29,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <header className="fixed top-0 left-0 z-50 p-4">
+        {/* Desktop header */}
+        <header className="hidden sm:block fixed top-0 left-0 z-50 p-4">
           <Link href="/" className="flex flex-col items-center">
             <Image
               src="/srglogo.png"
@@ -45,6 +46,24 @@ export default function RootLayout({
             </div>
           </Link>
         </header>
+
+        {/* Mobile header overlay */}
+        <div className="sm:hidden absolute top-2 left-2 z-20">
+          <Link href="/" className="flex flex-col items-center">
+            <Image
+              src="/srglogo.png"
+              alt="Smart Recipe Generator Logo"
+              width={50}
+              height={50}
+              className="rounded-full"
+            />
+            <div className="text-center mt-1">
+              <p className="text-xs font-medium text-white drop-shadow-sm">Your Pantry.</p>
+              <p className="text-xs font-medium text-green-100 drop-shadow-sm">Your Preferences.</p>
+              <p className="text-sm font-bold text-green-200 drop-shadow-md">Your Recipe.</p>
+            </div>
+          </Link>
+        </div>
         {children}
       </body>
     </html>

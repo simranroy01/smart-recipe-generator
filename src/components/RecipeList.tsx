@@ -17,7 +17,7 @@ interface RecipeListProps {
 
 export default function RecipeList({ recipes, onBack }: RecipeListProps) {
   return (
-    <div className="w-full max-w-4xl p-8 mx-auto my-10">
+    <div className="w-full max-w-4xl p-4 sm:p-8 mx-auto my-6 sm:my-10">
       {onBack && (
         <div className="mb-6 flex justify-start">
           <button

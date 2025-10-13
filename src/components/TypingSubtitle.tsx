@@ -46,9 +46,10 @@ export default function TypingSubtitle() {
   }, [])
 
   return (
-    <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-       Have ingredients but no ideas? <span className="inline-block min-w-0">{displayedText}</span>
-       {showCursor && <span className="animate-blink">|</span>}
-     </p>
+    <div className="mt-6 sm:mt-8 mb-4 sm:mb-6">
+      <p className="text-base sm:text-lg leading-8 text-gray-600 dark:text-gray-300 min-h-[8rem] sm:min-h-[5rem]">
+         Have ingredients but no ideas? <span className="inline-block min-w-0">{displayedText}{showCursor && <span className="animate-blink">|</span>}</span>
+       </p>
+    </div>
   )
 }
