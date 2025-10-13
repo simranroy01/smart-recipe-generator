@@ -4,19 +4,30 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabaseClient'
 
+interface Recipe {
+  id: number
+  title: string
+  image_url: string
+  difficulty?: string
+  cooking_time_minutes?: number
+  score?: number
+  cuisine?: string
+  description?: string
+  // ...other fields as needed
+}
+
 interface RecipeCardProps {
-  recipe: {
-    id: number
-    title: string
-    image_url: string
-    difficulty?: string
-    cooking_time_minutes?: number
-    score?: number
-    cuisine?: string
-    description?: string
-    // ...other fields as needed
-  }
+  recipe: Recipe
   showRating?: boolean
+}
+
+interface NormalRecipe {
+  id: number
+}
+
+interface FavoritesResponse {
+  normal: NormalRecipe[]
+  ai: Recipe[]
 }
 
 export default function RecipeCard({ recipe }: RecipeCardProps) {
@@ -31,13 +42,13 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
 
       const response = await fetch('/api/favorites')
       if (response.ok) {
-        const { normal, ai } = await response.json()
+        const { normal, ai }: FavoritesResponse = await response.json()
         if (recipe.score) {
           // AI recipe
-          setIsSaved(ai.some((r: any) => JSON.stringify(r) === JSON.stringify(recipe)))
+          setIsSaved(ai.some((r: Recipe) => JSON.stringify(r) === JSON.stringify(recipe)))
         } else {
           // Normal recipe
-          setIsSaved(normal.some((r: any) => r.id === recipe.id))
+          setIsSaved(normal.some((r: NormalRecipe) => r.id === recipe.id))
         }
       }
     }

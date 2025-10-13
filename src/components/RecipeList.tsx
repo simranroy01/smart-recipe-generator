@@ -12,7 +12,7 @@ interface Recipe {
 
 interface RecipeListProps {
   recipes: Recipe[]
-  onBack: () => void
+  onBack?: () => void
 }
 
 export default function RecipeList({ recipes, onBack }: RecipeListProps) {

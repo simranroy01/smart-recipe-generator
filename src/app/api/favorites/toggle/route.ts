@@ -1,6 +1,23 @@
 import { createSupabaseServerClient } from '@/lib/supabaseServer'
 import { NextRequest, NextResponse } from 'next/server'
 
+interface AiRecipe {
+  id: number
+  title: string
+  image_url: string
+  difficulty?: string
+  cooking_time_minutes?: number
+  score?: number
+  cuisine?: string
+  description?: string
+}
+
+interface ToggleRequest {
+  type: 'normal' | 'ai'
+  recipeId?: number
+  recipeData?: AiRecipe
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = createSupabaseServerClient()
@@ -10,7 +27,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { type, recipeId, recipeData } = await request.json()
+    const { type, recipeId, recipeData }: ToggleRequest = await request.json()
 
     if (type === 'normal') {
       if (!recipeId) {
@@ -98,7 +115,8 @@ export async function POST(request: NextRequest) {
     } else {
       return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
     }
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred'
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }

@@ -20,11 +20,12 @@ export async function GET() {
           ? JSON.parse(recipe.ingredients.replace(/""/g, '"'))
           : recipe.ingredients
       } catch {}
-      ingredients?.forEach(ing => allIngredients.add(ing.name))
+      ingredients?.forEach((ing: RecipeIngredient) => allIngredients.add(ing.name))
     })
 
     return NextResponse.json({ ingredients: Array.from(allIngredients).sort() })
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred'
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }

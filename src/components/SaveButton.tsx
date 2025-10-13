@@ -4,7 +4,16 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabaseClient'
 
 interface SaveButtonProps {
-  recipe: any
+  recipe: {
+    id: number;
+    title: string;
+    image_url: string;
+    difficulty?: string;
+    cooking_time_minutes?: number;
+    score?: number;
+    cuisine?: string;
+    description?: string;
+  }
   type: 'normal' | 'ai'
 }
 
@@ -22,9 +31,9 @@ export default function SaveButton({ recipe, type }: SaveButtonProps) {
       if (response.ok) {
         const { normal, ai } = await response.json()
         if (type === 'ai') {
-          setIsSaved(ai.some((r: any) => JSON.stringify(r) === JSON.stringify(recipe)))
+          setIsSaved(ai.some((r: { id: number; title: string; image_url: string; difficulty?: string; cooking_time_minutes?: number; score?: number; cuisine?: string; description?: string }) => JSON.stringify(r) === JSON.stringify(recipe)))
         } else {
-          setIsSaved(normal.some((r: any) => r.id === recipe.id))
+          setIsSaved(normal.some((r: { id: number; title: string; image_url: string; difficulty?: string; cooking_time_minutes?: number; score?: number; cuisine?: string; description?: string }) => r.id === recipe.id))
         }
       }
     }

@@ -15,7 +15,7 @@ interface RecipePageParams {
 }
 
 interface Recipe {
-  id: string
+  id: number
   title: string
   cuisine: string
   difficulty: string
@@ -98,7 +98,7 @@ export default function RecipePage({ params }: RecipePageParams) {
         <SaveButton recipe={recipe} type="normal" />
         <div className="flex items-center space-x-2">
           <RatingStars
-            recipeId={parseInt(recipe.id)}
+            recipeId={recipe.id}
             type="normal"
             initialRating={userRating}
             onRatingChange={setUserRating}

@@ -1,6 +1,12 @@
 import { createSupabaseServerClient } from '@/lib/supabaseServer'
 import { NextRequest, NextResponse } from 'next/server'
 
+interface RateRequest {
+  recipeId: number
+  type: string
+  rating: number
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = createSupabaseServerClient()
@@ -10,7 +16,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { recipeId, type, rating } = await request.json()
+    const { recipeId, type, rating }: RateRequest = await request.json()
 
     if (!recipeId || !type || rating < 1 || rating > 5) {
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 })
@@ -33,8 +39,9 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true })
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred'
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }
 
@@ -80,7 +87,8 @@ export async function GET(request: NextRequest) {
       userRating: userRating?.rating || 0,
       averageRating: Math.round(average * 10) / 10 // Round to 1 decimal
     })
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred'
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }

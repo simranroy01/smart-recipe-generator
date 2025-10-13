@@ -12,7 +12,6 @@ const lines = [
 export default function TypingSubtitle() {
   const [currentLineIndex, setCurrentLineIndex] = useState(0)
   const [displayedText, setDisplayedText] = useState('')
-  const [isTyping, setIsTyping] = useState(true)
   const [showCursor, setShowCursor] = useState(true)
 
   useEffect(() => {
@@ -20,7 +19,6 @@ export default function TypingSubtitle() {
     const words = currentLine.split(' ')
     let wordIndex = 0
     setDisplayedText('')
-    setIsTyping(true)
 
     const typeInterval = setInterval(() => {
       if (wordIndex < words.length) {
@@ -29,7 +27,6 @@ export default function TypingSubtitle() {
         wordIndex++
       } else {
         clearInterval(typeInterval)
-        setIsTyping(false)
         // Wait before moving to next line
         setTimeout(() => {
           setCurrentLineIndex(prev => (prev + 1) % lines.length)

@@ -3,6 +3,35 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!)
 
+interface Ingredient {
+  quantity: string
+  name: string
+}
+
+interface Nutrition {
+  calories: string
+  protein: string
+}
+
+interface AiRecipe {
+  title: string
+  difficulty: string
+  cooking_time_minutes: number
+  cuisine: string
+  description: string
+  servings: number
+  ingredients: Ingredient[]
+  instructions: string[]
+  nutrition: Nutrition
+}
+
+interface GenerateRequest {
+  ingredients: string[]
+  dietary?: string
+  maxTime?: number
+  difficulty?: string
+}
+
 async function getUnsplashImage(query: string): Promise<string> {
   try {
     const accessKey = process.env.UNSPLASH_ACCESS_KEY
@@ -32,7 +61,7 @@ async function getUnsplashImage(query: string): Promise<string> {
 
 export async function POST(request: NextRequest) {
   try {
-    const { ingredients, dietary, maxTime, difficulty } = await request.json()
+    const { ingredients, dietary, maxTime, difficulty }: GenerateRequest = await request.json()
 
     if (!ingredients || ingredients.length === 0) {
       return NextResponse.json({ error: 'Ingredients are required' }, { status: 400 })
@@ -65,7 +94,7 @@ Example: [{"title": "Chicken Stir Fry", "difficulty": "Easy", "cooking_time_minu
     const response = await result.response
     const text = response.text()
 
-    let recipes
+    let recipes: AiRecipe[]
     try {
       // Extract JSON array from the response
       const jsonMatch = text.match(/\[[\s\S]*\]/)
@@ -77,7 +106,7 @@ Example: [{"title": "Chicken Stir Fry", "difficulty": "Easy", "cooking_time_minu
     }
 
     // Add image_url from Unsplash and id
-    const formattedRecipes = await Promise.all(recipes.map(async (recipe: any, index: number) => {
+    const formattedRecipes = await Promise.all(recipes.map(async (recipe: AiRecipe, index: number) => {
       const imageUrl = await getUnsplashImage(recipe.title)
       return {
         id: Date.now() + index, // Simple unique id

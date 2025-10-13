@@ -17,7 +17,7 @@ interface Recipe {
 interface Preferences {
   cuisines: string[]
   difficulties: string[]
-  explicit: any
+  explicit: boolean
 }
 
 export default function SuggestionsPage() {
@@ -99,7 +99,7 @@ export default function SuggestionsPage() {
       {recommendations.length > 0 ? (
         <div>
           <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-            Here are some recipes we think you'll love based on your ratings and saved recipes:
+            Here are some recipes we think you&apos;ll love based on your ratings and saved recipes:
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recommendations.map((recipe) => (

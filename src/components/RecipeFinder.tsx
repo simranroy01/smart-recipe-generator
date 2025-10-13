@@ -84,7 +84,7 @@ export default function RecipeFinder() {
       const data = await response.json()
       if (!response.ok) throw new Error(data.error || 'Failed to recognize ingredients.')
       setSelectedIngredients(data.ingredients || [])
-    } catch (err) {
+    } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setFindLoading(false)
@@ -162,8 +162,8 @@ export default function RecipeFinder() {
       if (!response.ok) throw new Error(data.error)
       setRecipes(data.recipes)
       setCurrentView('results')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setAiLoading(false)
     }

@@ -1,6 +1,26 @@
 import { createSupabaseServerClient } from '@/lib/supabaseServer'
 import { NextRequest, NextResponse } from 'next/server'
 
+interface NormalRecipe {
+  id: number
+  title: string
+  image_url: string
+  difficulty: string
+  cooking_time_minutes: number
+  cuisine: string
+}
+
+interface AiRecipe {
+  id: number
+  title: string
+  image_url: string
+  difficulty?: string
+  cooking_time_minutes?: number
+  score?: number
+  cuisine?: string
+  description?: string
+}
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = createSupabaseServerClient()
@@ -23,7 +43,7 @@ export async function GET(request: NextRequest) {
     const recipeIds = normalFavorites?.map(fav => fav.recipe_id) || []
 
     // Then fetch the recipes
-    let normalRecipes: any[] = []
+    let normalRecipes: NormalRecipe[] = []
     if (recipeIds.length > 0) {
       const { data: recipesData, error: recipesError } = await supabase
         .from('recipes')
@@ -44,13 +64,14 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.id)
 
     // AI recipes are already JSON, or empty if table not found
-    const aiRecipes = aiError ? [] : aiFavorites?.map(fav => fav.recipe_data) || []
+    const aiRecipes: AiRecipe[] = aiError ? [] : aiFavorites?.map(fav => fav.recipe_data as AiRecipe) || []
 
     return NextResponse.json({
       normal: normalRecipes,
       ai: aiRecipes
     })
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred'
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }
