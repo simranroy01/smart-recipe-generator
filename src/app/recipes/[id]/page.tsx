@@ -39,6 +39,10 @@ export default function RecipePage({ params }: RecipePageParams) {
     const fetchRecipe = async () => {
       try {
         const supabase = createClient()
+        if (!supabase) {
+          setError('Supabase client not available')
+          return
+        }
         const { id } = await params
 
         const { data, error } = await supabase

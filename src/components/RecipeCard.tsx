@@ -37,6 +37,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
 
   useEffect(() => {
     const checkSaved = async () => {
+      if (!supabase) return
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 

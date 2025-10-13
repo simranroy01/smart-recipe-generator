@@ -1,6 +1,6 @@
 // src/app/auth/page.tsx
 'use client'
-
+export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 import { useState } from 'react'
@@ -19,6 +19,14 @@ export default function AuthPage() {
   const [messageType, setMessageType] = useState<'error' | 'success'>('error')
   const router = useRouter()
   const supabase = createClient()
+
+  if (!supabase) {
+    return (
+      <main className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">Supabase is not configured properly.</p>
+      </main>
+    )
+  }
 
   // Handler for the Sign In form
   const handleSignIn = async (e: React.FormEvent) => {

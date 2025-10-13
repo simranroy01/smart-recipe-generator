@@ -24,6 +24,7 @@ export default function SaveButton({ recipe, type }: SaveButtonProps) {
 
   useEffect(() => {
     const checkSaved = async () => {
+      if (!supabase) return
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 

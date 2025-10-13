@@ -28,6 +28,10 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const checkAuth = async () => {
+      if (!supabase) {
+        router.push('/auth')
+        return
+      }
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/auth')
