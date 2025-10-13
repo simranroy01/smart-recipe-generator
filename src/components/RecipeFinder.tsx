@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import RecipeList from './RecipeList'
 
 export interface Recipe {
@@ -83,8 +84,8 @@ export default function RecipeFinder() {
       const data = await response.json()
       if (!response.ok) throw new Error(data.error || 'Failed to recognize ingredients.')
       setSelectedIngredients(data.ingredients || [])
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setFindLoading(false)
     }
@@ -130,8 +131,8 @@ export default function RecipeFinder() {
       if (!response.ok) throw new Error(data.error)
       setRecipes(data.recipes)
       setCurrentView('results')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setFindLoading(false)
     }
@@ -218,7 +219,7 @@ export default function RecipeFinder() {
             </div>
             {imagePreview && (
               <div className="flex justify-center mb-4">
-                <img src={imagePreview} alt="Uploaded ingredients" className="max-h-48 rounded shadow" />
+                <Image src={imagePreview} alt="Uploaded ingredients" width={300} height={200} className="max-h-48 rounded shadow" />
               </div>
             )}
             <button type="submit" disabled={findLoading || !file} className="w-full px-4 py-2 text-lg font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 disabled:bg-gray-400 transition-colors">

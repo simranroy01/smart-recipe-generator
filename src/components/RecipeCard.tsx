@@ -84,6 +84,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
         src={recipe.image_url}
         alt={recipe.title}
         className="w-full h-56 object-cover rounded-lg mb-4"
+        loading="lazy"
       />
       <h3 className="text-xl font-semibold mb-2">{recipe.title}</h3>
       <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300 mb-4">
