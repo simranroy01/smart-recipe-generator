@@ -15,7 +15,7 @@ export default async function Home() {
   } = await supabase.auth.getSession()
 
   return (
-    <main className="relative flex flex-col items-center min-h-screen p-2 sm:p-4 pt-16 sm:pt-20 bg-gray-50 dark:bg-[#0a0a0a] overflow-hidden">
+    <main className="relative flex flex-col items-center min-h-screen p-2 sm:p-4 pt-16 sm:pt-12 bg-gray-50 dark:bg-[#0a0a0a] overflow-hidden">
       {/* Background image with overlay */}
       <div
         className="absolute inset-0 z-0"
