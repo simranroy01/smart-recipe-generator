@@ -26,27 +26,36 @@ export default function AIRecipePage() {
   const searchParams = useSearchParams()
   const dataStr = searchParams.get('data')
 
+  const [selectedServings, setSelectedServings] = useState<number>(4)
+  const [userRating, setUserRating] = useState<number>(0)
+  const [averageRating, setAverageRating] = useState<number>(0)
+  const [recipe, setRecipe] = useState<Recipe | null>(null)
+
+  useEffect(() => {
+    if (dataStr) {
+      const parsedRecipe = JSON.parse(decodeURIComponent(dataStr))
+      setRecipe(parsedRecipe)
+      setSelectedServings(parsedRecipe.servings || 4)
+      // Fetch ratings for AI recipe
+      const fetchRatings = async () => {
+        const ratingResponse = await fetch(`/api/rate-recipe?recipeId=${parsedRecipe.id}&type=ai`)
+        if (ratingResponse.ok) {
+          const ratingData = await ratingResponse.json()
+          setUserRating(ratingData.userRating)
+          setAverageRating(ratingData.averageRating)
+        }
+      }
+      fetchRatings()
+    }
+  }, [dataStr])
+
   if (!dataStr) {
     return <div className="text-center mt-10">Recipe not found.</div>
   }
 
-  const recipe: Recipe = JSON.parse(decodeURIComponent(dataStr))
-  const [selectedServings, setSelectedServings] = useState<number>(recipe.servings || 4)
-  const [userRating, setUserRating] = useState<number>(0)
-  const [averageRating, setAverageRating] = useState<number>(0)
-
-  useEffect(() => {
-    // Fetch ratings for AI recipe
-    const fetchRatings = async () => {
-      const ratingResponse = await fetch(`/api/rate-recipe?recipeId=${recipe.id}&type=ai`)
-      if (ratingResponse.ok) {
-        const ratingData = await ratingResponse.json()
-        setUserRating(ratingData.userRating)
-        setAverageRating(ratingData.averageRating)
-      }
-    }
-    fetchRatings()
-  }, [recipe.id])
+  if (!recipe) {
+    return <div className="text-center mt-10">Loading recipe...</div>
+  }
 
   const baseServings = recipe.servings || 4
   const scaledIngredients: RecipeIngredient[] = scaleIngredients(recipe.ingredients || [], baseServings, selectedServings)

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Image from "next/image";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,6 +29,22 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <header className="fixed top-0 left-0 z-50 p-4">
+          <Link href="/" className="flex flex-col items-center">
+            <Image
+              src="/srglogo.png"
+              alt="Smart Recipe Generator Logo"
+              width={100}
+              height={100}
+              className="rounded-full"
+            />
+            <div className="text-center mt-2">
+              <p className="text-sm font-medium text-white drop-shadow-sm">Your Pantry.</p>
+              <p className="text-sm font-medium text-green-100 drop-shadow-sm">Your Preferences.</p>
+              <p className="text-lg font-bold text-green-200 drop-shadow-md">Your Recipe.</p>
+            </div>
+          </Link>
+        </header>
         {children}
       </body>
     </html>

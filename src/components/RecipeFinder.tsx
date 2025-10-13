@@ -312,7 +312,7 @@ export default function RecipeFinder() {
           <button
             onClick={handleFindRecipes}
             disabled={findLoading}
-            className="group relative w-full inline-flex items-center justify-center px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="group relative w-full inline-flex items-center justify-center px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-green-600/70 to-green-300/70 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             <span className="relative z-10 flex items-center">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -320,7 +320,7 @@ export default function RecipeFinder() {
               </svg>
               {findLoading ? 'Finding Recipes...' : 'Find Recipes'}
             </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-green-700 to-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-green-700 to-green-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
           </button>
 
           <div className="flex items-center justify-center">
@@ -332,7 +332,7 @@ export default function RecipeFinder() {
           <button
             onClick={handleGenerateAIRecipes}
             disabled={aiLoading}
-            className="group relative w-full inline-flex items-center justify-center px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="group relative w-full inline-flex items-center justify-center px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-orange-300/70 to-orange-500/70 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             <span className="relative z-10 flex items-center">
               <svg className="w-5 h-5 mr-2 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -340,7 +340,7 @@ export default function RecipeFinder() {
               </svg>
               {aiLoading ? 'Generating AI Recipes...' : 'Generate AI Recipes'}
             </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
           </button>
         </div>
       </div>

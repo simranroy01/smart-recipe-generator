@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { createSupabaseServerClient } from '@/lib/supabaseServer'
 import SignOutButton from '@/components/SignOutButton'
 import ImageUploader from '@/components/RecipeFinder'
+import TypingSubtitle from '@/components/TypingSubtitle'
 
 // ...existing imports...
 
@@ -22,7 +23,7 @@ export default async function Home() {
           backgroundImage: "url('/foodbg.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          opacity: 0.5,
+          opacity: 0.6,
           pointerEvents: 'none',
         }}
         aria-hidden="true"
@@ -30,13 +31,20 @@ export default async function Home() {
       {/* Overlay for better contrast */}
       <div className="absolute inset-0 z-0 bg-white/40 dark:bg-black/60" aria-hidden="true" />
 
+      {/* Welcome message beside logo */}
+      {session && (
+        <div className="absolute top-5 left-32 z-10 animate-fade-in">
+          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 drop-shadow-sm">Welcome, {session.user.user_metadata?.name || session.user.email}!</p>
+        </div>
+      )}
+
+      {/* Buttons in top-right */}
       <div className="absolute top-5 right-5 z-10">
         {session ? (
           <div className="flex items-center gap-4">
-            <p className="text-base font-medium text-indigo-600 dark:text-indigo-400">Hey there, {session.user.user_metadata?.name || session.user.email}! 👋</p>
             <Link
               href="/profile"
-              className="group relative inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden"
+              className="group relative inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-600/70 to-emerald-600/70 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden animate-pulse-scale"
             >
               <span className="relative z-10 flex items-center">
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,7 +52,7 @@ export default async function Home() {
                 </svg>
                 My Favorite Recipes
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-green-700 to-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-green-700/70 to-emerald-700/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
             </Link>
             <SignOutButton />
           </div>
@@ -62,14 +70,12 @@ export default async function Home() {
         <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-6xl">
           Smart Recipe Generator
         </h1>
-        <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-          Have ingredients but no ideas? Upload a photo and find your next meal.
-        </p>
+        <TypingSubtitle />
         {session && (
           <div className="mt-8">
             <Link
               href="/suggestions"
-              className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden"
+              className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-orange-300/70 to-orange-500/70 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden"
             >
               <span className="relative z-10 flex items-center">
                 <svg className="w-5 h-5 mr-2 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,8 +83,8 @@ export default async function Home() {
                 </svg>
                 Get Personalized Suggestions
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
-              <div className="absolute inset-0 rounded-full border-2 border-purple-400 opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
+              <div className="absolute inset-0 rounded-full border-2 border-orange-200 opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300"></div>
             </Link>
           </div>
         )}

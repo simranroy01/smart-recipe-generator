@@ -16,7 +16,7 @@ export default function SignOutButton() {
   return (
     <button
       onClick={handleSignOut}
-      className="group relative inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-rose-600 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden"
+      className="group relative inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-600/70 to-rose-600/70 rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-out overflow-hidden"
     >
       <span className="relative z-10 flex items-center">
         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,7 +24,7 @@ export default function SignOutButton() {
         </svg>
         Sign Out
       </span>
-      <div className="absolute inset-0 bg-gradient-to-r from-red-700 to-rose-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-red-700/70 to-rose-700/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
     </button>
   )
 }
